@@ -102,6 +102,11 @@ python src/workflow_impact.py --before old.yml --after new.yml \
 The Marketplace wrapper is a composite action for Ubuntu runners with Python
 3 available. It installs a pinned PyYAML version and runs the same local CLI.
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contributor checks and the release
+process. The repository must be public before this action can be listed in
+GitHub Marketplace; it is usable from a private repository under GitHub's
+normal private action access rules.
+
 ## Licence
 
 MIT.
