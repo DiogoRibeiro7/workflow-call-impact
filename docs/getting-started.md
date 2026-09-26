@@ -58,9 +58,9 @@ directly instead of running this comparison.
 
 ## Read named caller repositories through the API
 
-The next release adds `caller-repositories`. With it, the action downloads the
-workflow files from each named repository's default branch. Keep the checkout
-of the **provider** repository and the step that creates `before.yml`, then
+The forthcoming `v0.2.0` release adds `caller-repositories`. With it, the action
+downloads workflow files from each named repository's default branch. Keep the
+checkout of the **provider** repository and the step that creates `before.yml`, then
 remove the caller checkout steps and replace `callers-root` with:
 
 ```yaml

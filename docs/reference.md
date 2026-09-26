@@ -16,7 +16,7 @@
 
 The two boolean inputs accept the strings `true` and `false`.
 Supply exactly one of `callers-root` or `caller-repositories`. The API option
-will be available in the next release; published `v0.1.0` supports only
+will be available in `v0.2.0`; published `v0.1.0` supports only
 `callers-root`.
 
 ## Outputs and exit status

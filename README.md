@@ -61,8 +61,8 @@ comparison and review the new interface.
 
 ### Named repositories without caller checkouts
 
-After the next release, you can replace the caller checkout steps and
-`callers-root` input with an explicit list:
+In the forthcoming `v0.2.0` release, you can replace the caller checkout steps
+and `callers-root` input with an explicit list:
 
 ```yaml
 with:
@@ -76,9 +76,8 @@ with:
 ```
 
 The published `v0.1.0` action does **not** support `caller-repositories`;
-this option becomes available when a new release is published after this
-change. The token needs Contents **read** access to each private caller
-repository. Public callers can be read without a token, subject to GitHub's
+`v0.2.0` will add it. The token needs Contents **read** access to each private
+caller repository. Public callers can be read without a token, subject to GitHub's
 unauthenticated API limits. The job's default `github.token` does not grant
 access to other private repositories.
 
