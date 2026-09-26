@@ -28,6 +28,21 @@ Submit a focused pull request to `main`. Explain any difference between
 definite breaks, cases requiring review, and callers affected on upgrade.
 Changes to action inputs or outputs need a README update.
 
+## Documentation
+
+The documentation site is built with MkDocs. It uses Python only for the
+documentation build; the published action runs on Node.js 24. To check a docs
+change locally with Python 3.12:
+
+```bash
+python -m pip install -r requirements-docs.txt
+mkdocs build --strict
+```
+
+The docs workflow builds changes in pull requests. After a docs change merges
+to `main`, it deploys the site through GitHub Pages. The repository's Pages
+source must be set to **GitHub Actions**.
+
 ## Preparing a release
 
 1. Confirm that the full CI job has run successfully, including the action

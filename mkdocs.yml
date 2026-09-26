@@ -1,0 +1,15 @@
+site_name: Reusable Workflow Impact
+site_description: Assess the impact of reusable GitHub workflow interface changes.
+site_url: https://diogoribeiro7.github.io/workflow-call-impact/
+repo_url: https://github.com/DiogoRibeiro7/workflow-call-impact
+edit_uri: edit/main/docs/
+theme:
+  name: readthedocs
+plugins:
+  - search
+nav:
+  - Overview: index.md
+  - Getting started: getting-started.md
+  - Reference: reference.md
+  - Scope and limitations: limitations.md
+  - Development: development.md
