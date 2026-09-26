@@ -1,0 +1,59 @@
+name: Reusable Workflow Impact
+description: Report which checked-out callers a reusable workflow interface change affects
+author: Diogo Ribeiro
+inputs:
+  before-file:
+    description: Previous version of the reusable workflow YAML
+    required: true
+  after-file:
+    description: Proposed version of the reusable workflow YAML
+    required: true
+  provider:
+    description: Provider reference without a version, OWNER/REPO/.github/workflows/FILE.yml
+    required: true
+  callers-root:
+    description: Directory containing checked-out caller repositories
+    required: true
+  report-file:
+    description: Optional path for a JSON report
+    required: false
+    default: ''
+  fail-on-impact:
+    description: Fail when a moving-ref caller has a definite breaking change
+    required: false
+    default: 'true'
+  require-matches:
+    description: Fail if no caller jobs use the specified provider
+    required: false
+    default: 'true'
+outputs:
+  affected-count:
+    description: Number of definitely broken callers on moving refs
+    value: ${{ steps.check.outputs.affected-count }}
+  matched-count:
+    description: Number of caller jobs referencing the provider
+    value: ${{ steps.check.outputs.matched-count }}
+runs:
+  using: composite
+  steps:
+    - name: Install YAML parser
+      shell: bash
+      run: python3 -m pip install --disable-pip-version-check 'PyYAML==6.0.3'
+    - name: Check callers
+      id: check
+      shell: bash
+      env:
+        IMPACT_BEFORE: ${{ inputs.before-file }}
+        IMPACT_AFTER: ${{ inputs.after-file }}
+        IMPACT_PROVIDER: ${{ inputs.provider }}
+        IMPACT_CALLERS: ${{ inputs.callers-root }}
+        IMPACT_REPORT: ${{ inputs.report-file }}
+        IMPACT_FAIL: ${{ inputs.fail-on-impact }}
+        IMPACT_REQUIRE_MATCHES: ${{ inputs.require-matches }}
+      run: |
+        args=(--before "$IMPACT_BEFORE" --after "$IMPACT_AFTER" --provider "$IMPACT_PROVIDER" --callers-root "$IMPACT_CALLERS" --fail-on-impact "$IMPACT_FAIL" --require-matches "$IMPACT_REQUIRE_MATCHES")
+        if [ -n "$IMPACT_REPORT" ]; then args+=(--report "$IMPACT_REPORT"); fi
+        python3 "$GITHUB_ACTION_PATH/src/workflow_impact.py" "${args[@]}"
+branding:
+  icon: git-pull-request
+  color: blue

@@ -1,0 +1,6 @@
+on:
+  workflow_call:
+    inputs:
+      legacy:
+        type: string
+        required: false
