@@ -90,17 +90,20 @@ for invalid inputs.
 
 ## Local development
 
-Python 3.12 or later is required. Install `PyYAML==6.0.3`, then run:
+Node.js 24 is required for development. Install dependencies and run checks:
 
 ```bash
-python -m unittest discover -s tests -v
-python src/workflow_impact.py --before old.yml --after new.yml \
-  --provider example/automation/.github/workflows/build.yml \
-  --callers-root consumers
+npm ci
+npm run check
+npm run format:check
+npm run build
+npm test
+npm run check:dist
 ```
 
-The Marketplace wrapper is a composite action for Ubuntu runners with Python
-3 available. It installs a pinned PyYAML version and runs the same local CLI.
+The action runs on the runner's Node.js 24 action runtime. Its YAML parser is
+included in the committed `dist/index.cjs` bundle, so consumers do not install
+Node packages or Python dependencies.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for contributor checks and the release
 process. The repository must be public before this action can be listed in

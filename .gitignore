@@ -1,8 +1,2 @@
-__pycache__/
-.mypy_cache/
-.pytest_cache/
-.ruff_cache/
-*.egg-info/
-.venv/
-dist/
-build/
+node_modules/
+coverage/

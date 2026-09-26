@@ -5,7 +5,6 @@ Describe the user-visible effect and any compatibility implications.
 ## Verification
 
 - [ ] Tests cover the changed behavior where applicable.
-- [ ] `python -m unittest discover -s tests -v`
-- [ ] `ruff check .` and `ruff format --check .`
-- [ ] `mypy src`
+- [ ] `npm ci`, `npm run check`, `npm run format:check`, and `npm test`
+- [ ] `npm run check:dist` if bundled action code changed.
 - [ ] README updated if usage or outputs changed.
