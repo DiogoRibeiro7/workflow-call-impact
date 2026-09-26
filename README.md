@@ -10,6 +10,9 @@ exact version or commit SHA. It fails only when a caller on a moving ref has a
 definite break, such as a removed input it passes or a new required input it
 does not pass. Changes to defaults and types are flagged for review.
 
+For the full setup guide, report reference, and limitations, see the
+[documentation](https://diogoribeiro7.github.io/workflow-call-impact/).
+
 ## Example
 
 Run this in the repository that owns the reusable workflow. Check out any caller
@@ -41,18 +44,20 @@ jobs:
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: git show "$BASE_SHA:.github/workflows/build.yml" > "$RUNNER_TEMP/before.yml"
-      - uses: OWNER/workflow-call-impact@v1
+      - uses: DiogoRibeiro7/workflow-call-impact@a30329b80f3b0351ca827493252023c4c5279588 # v0.1.0
         with:
           before-file: ${{ runner.temp }}/before.yml
           after-file: .github/workflows/build.yml
-          provider: OWNER/automation/.github/workflows/build.yml
+          provider: example/automation/.github/workflows/build.yml
           callers-root: consumers
           report-file: impact.json
 ```
 
-Replace `OWNER` and the example repositories with your own. Until a `v1`
-release exists, use an exact commit SHA for the action. If the base version did
-not contain the workflow, skip this comparison and review the new interface.
+Replace the example caller repository and `provider` with your own repositories.
+The action reference above pins the published `v0.1.0` release to its exact
+commit. You can use `@v0.1.0` instead if you prefer a version tag; there is no
+`v1` tag yet. If the base version did not contain the workflow, skip this
+comparison and review the new interface.
 
 ## What it checks
 
