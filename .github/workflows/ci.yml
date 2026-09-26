@@ -6,6 +6,17 @@ on:
 permissions:
   contents: read
 jobs:
+  runtime-audit:
+    name: Action runtime audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: DiogoRibeiro7/action-runtime-audit@bd23faa722d94ff0d9aa2471f71f6bc6d8bc267b # v0.1.1
+        with:
+          github-token: ${{ github.token }}
+
   test:
     runs-on: ubuntu-latest
     steps:
