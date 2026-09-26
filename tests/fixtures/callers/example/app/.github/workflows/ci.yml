@@ -1,0 +1,7 @@
+name: Consumer CI
+on: push
+jobs:
+  build:
+    uses: example/automation/.github/workflows/build.yml@main
+    with:
+      legacy: old
