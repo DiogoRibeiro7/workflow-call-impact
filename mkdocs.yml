@@ -2,14 +2,55 @@ site_name: Reusable Workflow Impact
 site_description: Assess the impact of reusable GitHub workflow interface changes.
 site_url: https://diogoribeiro7.github.io/workflow-call-impact/
 repo_url: https://github.com/DiogoRibeiro7/workflow-call-impact
+repo_name: DiogoRibeiro7/workflow-call-impact
 edit_uri: edit/main/docs/
 theme:
-  name: readthedocs
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - scheme: slate
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
+    - scheme: default
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to dark mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.follow
 plugins:
   - search
 nav:
-  - Overview: index.md
-  - Getting started: getting-started.md
-  - Reference: reference.md
-  - Scope and limitations: limitations.md
-  - Development: development.md
+  - Home: index.md
+  - Use the action:
+      - Getting started: getting-started.md
+      - Read the results: results.md
+  - Reference:
+      - Inputs and outputs: reference.md
+      - Scope and limitations: limitations.md
+  - Project:
+      - Development: development.md
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.superfences
+extra_css:
+  - stylesheets/extra.css
