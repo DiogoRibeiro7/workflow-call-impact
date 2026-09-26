@@ -6,21 +6,21 @@ fails only for definite breaks in callers using moving refs.
 
 ## Local development
 
-Use Python 3.12 or newer. From the repository root:
+Use Node.js 24. From the repository root:
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -e '.[dev]'
-python -m unittest discover -s tests -v
-ruff check .
-ruff format --check .
-mypy src
+npm ci
+npm run check
+npm run format:check
+npm run build
+npm test
+npm run check:dist
 ```
 
 Add a test with a minimal caller workflow for each changed matching rule.
-Keep GitHub workflow fixtures in `tests/fixtures/`. The CI workflow also runs
-the composite action itself against a fixture. Do not rely only on unit tests
+Keep GitHub workflow fixtures in `tests/fixtures/`. Commit the generated
+`dist/index.cjs` bundle whenever source or dependencies change. The CI workflow
+also runs the action itself against a fixture. Do not rely only on unit tests
 when changing `action.yml`.
 
 Submit a focused pull request to `main`. Explain any difference between
@@ -29,8 +29,9 @@ Changes to action inputs or outputs need a README update.
 
 ## Preparing a release
 
-1. Confirm that the full CI job has run successfully, including the composite
-   action smoke test. A run blocked before its job starts does not verify a release.
+1. Confirm that the full CI job has run successfully, including the action
+   smoke test and bundle verification. A run blocked before its job starts does
+   not verify a release.
 2. Review the README usage example, inputs, outputs, and limitations against the
    proposed commit.
 3. Create a semantic version tag such as `v1.0.0` on the tested commit and draft
