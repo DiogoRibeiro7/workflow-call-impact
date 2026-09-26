@@ -1,0 +1,37 @@
+name: Bug report
+description: Report an incorrect impact result or an action failure.
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Include a minimal example and remove tokens, secrets, and private
+        repository names before submitting.
+  - type: input
+    id: version
+    attributes:
+      label: Action version
+      description: The tag or commit SHA used in your workflow.
+      placeholder: v1.0.0 or a full commit SHA
+    validations:
+      required: true
+  - type: textarea
+    id: setup
+    attributes:
+      label: Provider and caller configuration
+      description: Show the relevant workflow_call interface and caller job.
+      render: yaml
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected result
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual result
+      description: Include the job summary or error text if available.
+    validations:
+      required: true

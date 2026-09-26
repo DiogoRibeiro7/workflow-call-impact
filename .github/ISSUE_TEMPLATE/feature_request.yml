@@ -1,0 +1,18 @@
+name: Feature request
+description: Suggest a new interface check or workflow capability.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: DevOps problem
+      description: Describe a concrete workflow change that the action cannot assess today.
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Example and expected result
+      description: Include a small sanitized YAML example when possible.
+      render: yaml
+    validations:
+      required: true
