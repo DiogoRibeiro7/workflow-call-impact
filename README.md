@@ -84,9 +84,9 @@ marked for review when a new required secret appears.
 | `require-matches` | No | `true` by default; fail if no caller matches the provider. |
 
 The action exposes `affected-count` (definitely broken caller jobs on moving
-refs) and `matched-count` (all caller jobs using the provider). Exit status is
-`0` for no definite break on ref update, `1` for definite breaks, and `2`
-for invalid inputs.
+refs) and `matched-count` (all caller jobs using the provider). It exits with
+status `0` for no definite break on ref update, or `1` for definite breaks or
+invalid inputs.
 
 ## Local development
 
@@ -95,9 +95,10 @@ Node.js 24 is required for development. Install dependencies and run checks:
 ```bash
 npm ci
 npm run check
+npm run lint
 npm run format:check
 npm run build
-npm test
+npm run test:coverage
 npm run check:dist
 ```
 

@@ -55,7 +55,9 @@ function readWorkflow(path: string): YamlObject {
   try {
     raw = parse(readFileSync(path, "utf8"), { uniqueKeys: true });
   } catch (error) {
-    throw new Error(`Cannot read workflow ${path}: ${String(error)}`);
+    throw new Error(`Cannot read workflow ${path}: ${String(error)}`, {
+      cause: error,
+    });
   }
   return mapping(raw, path);
 }
