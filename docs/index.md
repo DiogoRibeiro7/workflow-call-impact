@@ -45,12 +45,13 @@ check for definite breaks on moving refs.
 ## How it works
 
 1. Provide the previous and proposed reusable workflow files.
-2. Check out the caller repositories you want to assess under one directory.
+2. Check out the caller repositories under one directory, or list them for API mode.
 3. Run the action in a pull request job and review its summary.
 
 For a complete workflow, see [Getting started](getting-started.md). The
 published action is
 [`v0.1.0`](https://github.com/DiogoRibeiro7/workflow-call-impact/releases/tag/v0.1.0).
+API mode is planned for the next release; `v0.1.0` supports local checkouts.
 
 ## What a finding looks like
 
@@ -62,7 +63,7 @@ The action also marks changes to input types and defaults for review. See
 [Read the results](results.md) for the failure rules and JSON shape.
 
 !!! warning "Scan coverage is explicit"
-    The action scans only the caller repositories you check out. It does not
-    discover every caller across your organization. Review
+    The action scans only the caller repositories you check out or list. It
+    does not discover every caller across your organization. Review
     [scope and limitations](limitations.md) before treating a clean result as
     approval to change a shared workflow.

@@ -306,3 +306,30 @@ void test("bundled action writes outputs and fails only for definite moving-ref 
   });
   assert.equal(unmatched.status, 1, unmatched.stderr);
 });
+
+void test("bundled action requires exactly one caller source", (t) => {
+  const { before, after, callers } = fixture(t);
+  const bundle = join(import.meta.dirname, "..", "dist", "index.cjs");
+  const env = {
+    ...process.env,
+    "INPUT_BEFORE-FILE": before,
+    "INPUT_AFTER-FILE": after,
+    INPUT_PROVIDER: provider,
+  };
+  const missing = spawnSync(process.execPath, [bundle], {
+    env,
+    encoding: "utf8",
+  });
+  assert.equal(missing.status, 1);
+  assert.match(missing.stderr, /Supply exactly one/);
+  const both = spawnSync(process.execPath, [bundle], {
+    env: {
+      ...env,
+      "INPUT_CALLERS-ROOT": callers,
+      "INPUT_CALLER-REPOSITORIES": "acme/app",
+    },
+    encoding: "utf8",
+  });
+  assert.equal(both.status, 1);
+  assert.match(both.stderr, /Supply exactly one/);
+});

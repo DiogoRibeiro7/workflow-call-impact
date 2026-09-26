@@ -1,8 +1,9 @@
 # Getting started
 
 Run this action in the repository that owns the reusable workflow. It needs
-the previous and proposed workflow YAML files, the provider path, and one or
-more checked-out caller repositories. The example below checks one caller.
+the previous and proposed workflow YAML files, the provider path, and a
+selection of caller repositories. The published `v0.1.0` release uses local
+checkouts; the example below checks one caller.
 
 ```yaml
 name: Workflow change impact
@@ -54,6 +55,30 @@ not need a token.
 The base workflow must already exist at the pull request's base commit. If
 the pull request introduces a new reusable workflow, review that interface
 directly instead of running this comparison.
+
+## Read named caller repositories through the API
+
+The next release adds `caller-repositories`. With it, the action downloads the
+workflow files from each named repository's default branch. Keep the checkout
+of the **provider** repository and the step that creates `before.yml`, then
+remove the caller checkout steps and replace `callers-root` with:
+
+```yaml
+caller-repositories: |
+  example/application
+  example/service
+github-token: ${{ secrets.CALLER_READ_TOKEN }}
+```
+
+The published `v0.1.0` release does not support these inputs. For private
+callers, use a GitHub App token or fine-grained personal access token with
+Contents **read** access to every listed repository. The default
+`github.token` is scoped to the repository running the job, so it is not
+sufficient for other private repositories. For public caller repositories,
+you may omit `github-token`; GitHub's unauthenticated API limits still apply.
+List each repository once using `OWNER/REPO`, one per line. The action reads
+only files directly in `.github/workflows/` and stops with an error if a
+repository cannot be read. It does not discover callers you did not list.
 
 After the job runs, open its summary for the findings. The `report-file`
 input writes the same analysis as JSON for later steps in the job. The
