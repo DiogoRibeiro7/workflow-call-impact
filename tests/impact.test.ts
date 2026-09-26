@@ -12,7 +12,7 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { spawnSync } from "node:child_process";
 import { test, type TestContext } from "node:test";
-import { analyze } from "../src/impact.js";
+import { analyze, markdown } from "../src/impact.js";
 
 const provider = "Example/automation/.github/workflows/build.yml";
 
@@ -67,7 +67,7 @@ function fixture(t: TestContext): {
   return { root, before, after, callers };
 }
 
-test("moving callers break while exact version callers are affected on upgrade", (t) => {
+void test("moving callers break while exact version callers are affected on upgrade", (t) => {
   const { before, after, callers } = fixture(t);
   write(
     callers,
@@ -118,7 +118,7 @@ jobs:
   );
 });
 
-test("inherited secrets are reported for review, not as a definite break", (t) => {
+void test("inherited secrets are reported for review, not as a definite break", (t) => {
   const { before, after, callers } = fixture(t);
   writeFileSync(
     after,
@@ -151,7 +151,7 @@ test("inherited secrets are reported for review, not as a definite break", (t) =
   assert.equal(result.findings[0]?.severity, "review");
 });
 
-test("unrelated callers do not produce findings", (t) => {
+void test("unrelated callers do not produce findings", (t) => {
   const { before, after, callers } = fixture(t);
   write(
     callers,
@@ -167,7 +167,92 @@ test("unrelated callers do not produce findings", (t) => {
   assert.deepEqual(result.findings, []);
 });
 
-test("bundled action writes outputs and fails only for definite moving-ref breaks", (t) => {
+void test("reports changed input types and explicitly passed secrets", (t) => {
+  const { before, after, callers } = fixture(t);
+  writeFileSync(
+    before,
+    `on:
+  workflow_call:
+    inputs:
+      mode:
+        type: string
+        default: fast
+    secrets:
+      old-token: {}
+`,
+  );
+  writeFileSync(
+    after,
+    `on:
+  workflow_call:
+    inputs:
+      mode:
+        type: boolean
+        default: true
+    secrets:
+      new-token:
+        required: true
+`,
+  );
+  write(
+    callers,
+    "org/repo/.github/workflows/ci.yml",
+    `jobs:
+  deploy:
+    uses: ${provider}@main
+    with:
+      mode: fast
+    secrets:
+      old-token: \${{ secrets.OLD_TOKEN }}
+  default-mode:
+    uses: ${provider}@v1.0.0
+`,
+  );
+  const result = analyze(before, after, provider, callers);
+  assert.equal(result.matched_jobs, 2);
+  assert.deepEqual(
+    new Set(result.findings.map((finding) => finding.reason)),
+    new Set([
+      "passes input mode whose type changed",
+      "relies on changed default for mode",
+      "passes removed secret old-token",
+      "must provide required secret new-token",
+    ]),
+  );
+  assert.equal(
+    result.findings.filter((finding) => finding.timing === "on upgrade").length,
+    2,
+  );
+  assert.match(markdown(result), /passes removed secret old-token/);
+});
+
+void test("rejects malformed workflow declarations instead of claiming a safe result", (t) => {
+  const { before, after, callers } = fixture(t);
+  writeFileSync(
+    after,
+    "on:\n  workflow_call:\n    inputs:\n      target:\n        required: yes\n",
+  );
+  assert.throws(
+    () => analyze(before, after, provider, callers),
+    /required must be a boolean/,
+  );
+  writeFileSync(after, "on:\n  workflow_call: []\n");
+  assert.throws(
+    () => analyze(before, after, provider, callers),
+    /workflow_call must be a mapping/,
+  );
+  writeFileSync(after, "on:\n  workflow_call:\n    inputs: {}\n");
+  assert.throws(
+    () => analyze(before, after, "invalid-ref", callers),
+    /provider must be/,
+  );
+  assert.throws(
+    () => analyze(before, after, provider, join(callers, "missing")),
+    /Callers directory/,
+  );
+});
+
+void test("bundled action writes outputs and fails only for definite moving-ref breaks", (t) => {
   const { root, before, after, callers } = fixture(t);
   write(
     callers,
@@ -202,7 +287,13 @@ test("bundled action writes outputs and fails only for definite moving-ref break
   assert.match(readFileSync(output, "utf8"), /affected-count=1\n/);
   assert.match(readFileSync(output, "utf8"), /matched-count=1\n/);
   assert.match(readFileSync(summary, "utf8"), /required input target/);
-  assert.equal(JSON.parse(readFileSync(report, "utf8")).matched_jobs, 1);
+  const parsedReport: unknown = JSON.parse(readFileSync(report, "utf8"));
+  assert.ok(
+    parsedReport !== null &&
+      typeof parsedReport === "object" &&
+      "matched_jobs" in parsedReport,
+  );
+  assert.equal(parsedReport.matched_jobs, 1);
 
   const reported = spawnSync(process.execPath, [bundle], {
     env: { ...env, "INPUT_FAIL-ON-IMPACT": "false" },

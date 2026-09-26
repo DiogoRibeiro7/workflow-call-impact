@@ -11,9 +11,10 @@ Use Node.js 24. From the repository root:
 ```bash
 npm ci
 npm run check
+npm run lint
 npm run format:check
 npm run build
-npm test
+npm run test:coverage
 npm run check:dist
 ```
 

@@ -9,19 +9,24 @@
   "scripts": {
     "build": "esbuild src/index.ts --bundle --platform=node --target=node24 --format=cjs --minify --outfile=dist/index.cjs",
     "check": "tsc --noEmit",
-    "format": "prettier --write 'src/**/*.ts' 'tests/**/*.ts' package.json tsconfig.json",
-    "format:check": "prettier --check 'src/**/*.ts' 'tests/**/*.ts' package.json tsconfig.json",
+    "lint": "eslint 'src/**/*.ts' 'tests/**/*.ts'",
+    "format": "prettier --write 'src/**/*.ts' 'tests/**/*.ts' eslint.config.mjs package.json tsconfig.json",
+    "format:check": "prettier --check 'src/**/*.ts' 'tests/**/*.ts' eslint.config.mjs package.json tsconfig.json",
     "test": "node --import tsx --test tests/*.test.ts",
+    "test:coverage": "node --experimental-test-coverage --test-coverage-include='src/**/*.ts' --test-coverage-lines=90 --test-coverage-branches=85 --test-coverage-functions=95 --import tsx --test tests/*.test.ts",
     "check:dist": "npm run build && git diff --exit-code -- dist/index.cjs"
   },
   "dependencies": {
     "yaml": "2.9.1"
   },
   "devDependencies": {
+    "@eslint/js": "10.0.1",
     "@types/node": "24.19.0",
     "esbuild": "0.28.2",
+    "eslint": "10.11.0",
     "prettier": "3.6.2",
     "tsx": "4.23.15",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.70.1"
   }
 }
