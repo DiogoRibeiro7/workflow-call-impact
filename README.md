@@ -10,6 +10,9 @@ exact version or commit SHA. It fails only when a caller on a moving ref has a
 definite break, such as a removed input it passes or a new required input it
 does not pass. Changes to defaults and types are flagged for review.
 
+For the full setup guide, report reference, and limitations, see the
+[documentation](https://diogoribeiro7.github.io/workflow-call-impact/).
+
 ## Example
 
 Run this in the repository that owns the reusable workflow. Check out any caller
