@@ -51,7 +51,7 @@ check for definite breaks on moving refs.
 For a complete workflow, see [Getting started](getting-started.md). The
 published action is
 [`v0.1.0`](https://github.com/DiogoRibeiro7/workflow-call-impact/releases/tag/v0.1.0).
-API mode is planned for the next release; `v0.1.0` supports local checkouts.
+API mode is planned for `v0.2.0`; `v0.1.0` supports local checkouts.
 
 ## What a finding looks like
 
