@@ -2,8 +2,8 @@
 
 A GitHub Action that identifies callers affected by changes to a reusable
 workflow's `workflow_call` interface. It compares the old and proposed workflow
-files, scans caller repositories that you have checked out, and writes a job
-summary. A JSON report is optional.
+files, scans caller repositories that you have checked out or explicitly
+listed, and writes a job summary. A JSON report is optional.
 
 For each caller, the report distinguishes a moving branch or major tag from an
 exact version or commit SHA. It fails only when a caller on a moving ref has a
@@ -59,6 +59,29 @@ commit. You can use `@v0.1.0` instead if you prefer a version tag; there is no
 `v1` tag yet. If the base version did not contain the workflow, skip this
 comparison and review the new interface.
 
+### Named repositories without caller checkouts
+
+After the next release, you can replace the caller checkout steps and
+`callers-root` input with an explicit list:
+
+```yaml
+with:
+  before-file: ${{ runner.temp }}/before.yml
+  after-file: .github/workflows/build.yml
+  provider: example/automation/.github/workflows/build.yml
+  caller-repositories: |
+    example/application
+    example/service
+  github-token: ${{ secrets.CALLER_READ_TOKEN }}
+```
+
+The published `v0.1.0` action does **not** support `caller-repositories`;
+this option becomes available when a new release is published after this
+change. The token needs Contents **read** access to each private caller
+repository. Public callers can be read without a token, subject to GitHub's
+unauthenticated API limits. The job's default `github.token` does not grant
+access to other private repositories.
+
 ## What it checks
 
 - Removed inputs or explicitly passed secrets; newly required inputs or secrets.
@@ -69,9 +92,9 @@ comparison and review the new interface.
   `main` receives the change or `v1` advances to a new release).
 
 Only workflows directly under `.github/workflows/` are scanned, within the
-provided callers directory. The action reads local files and does not request a
-GitHub token. **You control which repositories are scanned by checking them
-out first**; it does not discover every repository in an organization. Literal
+selected repositories. **You control which repositories are scanned by
+checking them out or listing them explicitly**; the action does not discover
+every repository in an organization. Literal
 values and expression-derived values are both reported for changed input types
 because a static check cannot prove their runtime type. `secrets: inherit` is
 marked for review when a new required secret appears.
@@ -83,7 +106,9 @@ marked for review when a new required secret appears.
 | `before-file` | Yes | Old reusable workflow YAML. |
 | `after-file` | Yes | Proposed reusable workflow YAML. |
 | `provider` | Yes | `OWNER/REPO/.github/workflows/FILE.yml`, without `@ref`. |
-| `callers-root` | Yes | Directory containing checked-out caller repositories. |
+| `callers-root` | One of two | Directory containing checked-out caller repositories. |
+| `caller-repositories` | One of two | Newline or whitespace-separated `OWNER/REPO` list to read via the GitHub API. |
+| `github-token` | No | Token with Contents read access to the listed private caller repositories. |
 | `report-file` | No | Path to write JSON results. |
 | `fail-on-impact` | No | `true` by default; `false` reports without failing. |
 | `require-matches` | No | `true` by default; fail if no caller matches the provider. |

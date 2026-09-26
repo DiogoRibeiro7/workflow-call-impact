@@ -7,12 +7,17 @@
 | `before-file` | Yes | — | Previous version of the provider workflow YAML. |
 | `after-file` | Yes | — | Proposed version of the provider workflow YAML. |
 | `provider` | Yes | — | `OWNER/REPO/.github/workflows/FILE.yml` or `.yaml`, without `@ref`. |
-| `callers-root` | Yes | — | Directory containing checked-out caller repositories. |
+| `callers-root` | One of two | — | Directory containing checked-out caller repositories. |
+| `caller-repositories` | One of two | — | Whitespace-separated `OWNER/REPO` list scanned through the GitHub API. |
+| `github-token` | No | Empty | Token with Contents read access to selected private repositories. |
 | `report-file` | No | Empty | Optional path for a JSON report. |
 | `fail-on-impact` | No | `true` | Fail for definite breaks in callers using moving refs. |
 | `require-matches` | No | `true` | Fail if no caller job references `provider`. |
 
 The two boolean inputs accept the strings `true` and `false`.
+Supply exactly one of `callers-root` or `caller-repositories`. The API option
+will be available in the next release; published `v0.1.0` supports only
+`callers-root`.
 
 ## Outputs and exit status
 

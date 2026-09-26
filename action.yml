@@ -1,5 +1,5 @@
 name: Reusable Workflow Impact
-description: Report which checked-out callers a reusable workflow interface change affects
+description: Report which callers a reusable workflow interface change affects
 author: Diogo Ribeiro
 inputs:
   before-file:
@@ -13,7 +13,13 @@ inputs:
     required: true
   callers-root:
     description: Directory containing checked-out caller repositories
-    required: true
+    required: false
+  caller-repositories:
+    description: Whitespace-separated OWNER/REPO list to scan through the GitHub API instead of callers-root
+    required: false
+  github-token:
+    description: Token with contents read access to the selected repositories; public repositories may be read without one
+    required: false
   report-file:
     description: Optional path for a JSON report
     required: false

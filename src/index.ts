@@ -3,6 +3,7 @@
 import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { analyze, markdown } from "./impact.js";
+import { analyzeRepositories } from "./github-callers.js";
 
 /** GitHub exposes JavaScript action inputs as INPUT_<NAME> environment variables. */
 function input(name: string, required = false): string {
@@ -22,13 +23,26 @@ function booleanInput(name: string, defaultValue: boolean): boolean {
   return raw === "true";
 }
 
-function run(): void {
-  const result = analyze(
-    input("before-file", true),
-    input("after-file", true),
-    input("provider", true),
-    input("callers-root", true),
-  );
+async function run(): Promise<void> {
+  const before = input("before-file", true);
+  const after = input("after-file", true);
+  const provider = input("provider", true);
+  const root = input("callers-root");
+  const repositories = input("caller-repositories");
+  if (Boolean(root) === Boolean(repositories)) {
+    throw new Error(
+      "Supply exactly one of callers-root or caller-repositories",
+    );
+  }
+  const result = repositories
+    ? await analyzeRepositories(
+        before,
+        after,
+        provider,
+        repositories,
+        input("github-token"),
+      )
+    : analyze(before, after, provider, root);
   const summary = markdown(result);
   process.stdout.write(summary);
   if (process.env.GITHUB_STEP_SUMMARY) {
@@ -59,7 +73,9 @@ function run(): void {
   }
 
   if (result.matched_jobs === 0 && booleanInput("require-matches", true)) {
-    throw new Error("no callers matched; check the provider and callers-root");
+    throw new Error(
+      "no callers matched; check the provider and caller selection",
+    );
   }
   if (broken.size > 0 && booleanInput("fail-on-impact", true)) {
     throw new Error(
@@ -68,9 +84,7 @@ function run(): void {
   }
 }
 
-try {
-  run();
-} catch (error: unknown) {
+void run().catch((error: unknown) => {
   const message = error instanceof Error ? error.message : String(error);
   // Escape control characters in the GitHub workflow command.
   const escaped = message
@@ -79,4 +93,4 @@ try {
     .replace(/\n/g, "%0A");
   process.stderr.write(`::error::${escaped}\n`);
   process.exitCode = 1;
-}
+});
